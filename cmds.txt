@@ -1,0 +1,11 @@
+zcash-cli z_getoperationstatus '["opid-ef60c61c-bb60-4f10-9247-ad3a9ccb166c"]'
+
+zcash-cli z_sendmany "$ZADDR" "[{\"amount\": 0.01, \"address\": \"$FRIEND_1\"}, {\"amount\": 0.01, \"address\": \"$FRIEND_2\"}]"
+
+ZADDR='ztestsapling19xjj9mdjudlr3863a0pjcf0kwhfqdpremlhcz5sy4r9sj64xmw6z89crar50tyrgf279x2l07uu'
+
+FRIEND_1='ztestsapling1dcmz9s58kx85atjmw89c0nh05dqe5qyakpth8szw8c7hxymgkdsastksrptdfnmc6390qh8gl8r'
+
+FRIEND_2='ztestsapling1mrtff36e7as3k8wxvmzuawjck3p8je0krwy9x7krh6gstgncrx70h9qw4hv7et4v2e8q5rf2n70'
+
+z_listreceivedbyaddress
