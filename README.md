@@ -6,3 +6,6 @@ In order to run this app, you have to:
 2. accessible zcash-cli from any place
 3. build with g++ -sdt=11 option
 4. specify your z_addr in main
+
+# client
+Sends specified amount of money to specified addr and returns transaction id.
