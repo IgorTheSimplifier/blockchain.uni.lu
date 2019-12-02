@@ -117,7 +117,7 @@ void Daemon::run(std::string filename, std::string address) {
 int main() {
 	std::cout << "Execution starts" << std::endl;
 	
-	std::string z_addr 		= "ztestsapling19xjj9mdjudlr3863a0pjcf0kwhfqdpremlhcz5sy4r9sj64xmw6z89crar50tyrgf279x2l07uu";
+	std::string z_addr 		= "ztestsapling1dcmz9s58kx85atjmw89c0nh05dqe5qyakpth8szw8c7hxymgkdsastksrptdfnmc6390qh8gl8r";
 	std::string filename 	= "z_listreceivedbyaddress.json";
 
 	Daemon daemon;

@@ -32,4 +32,10 @@
 *.app
 
 *.json
+
+.DS_Store
+
 daemon
+client
+operationstatus.txt
+opid.txt
