@@ -13,10 +13,10 @@ namespace utils {
 	// remove file
 	void cleanUp(std::string filename) {
 		if (std::remove(filename.c_str())!=0){
-			std::cout << "Nothing to delete" << std::endl;
+			// std::cout << "Nothing to delete" << std::endl;
 		}
 		else {
-			std::cout << filename << " has been successfully deleted" << std::endl;
+			// std::cout << filename << " has been successfully deleted" << std::endl;
 		}
 	}
 }// namespace utils
@@ -62,7 +62,6 @@ void Client::generateProof() {
 	proof = create(age);
 
 	std::cout << "Proof generation is done." << std::endl;
-	std::cout << proof << std::endl;
 }
 
 // zcash-cli z_sendmany "$ZADDR" "[{\"amount\": 0.01, \"address\": \"$FRIEND_1\"}, {\"amount\": 0.01, \"address\": \"$FRIEND_2\"}]"
@@ -96,7 +95,7 @@ std::string Client::z_sendmany(double amount, std::string recvAddress){
 				// command += "\"}";
 
 				command += "]\' >> opid.txt";
-	std::cout << command << std::endl;
+	// std::cout << command << std::endl;
 	system(command.c_str());
 	
 	std::ifstream file("opid.txt");
@@ -120,11 +119,11 @@ std::string Client::getTransactionId(std::string opid) {
 				command += opid;
 				command += "\"]\'";
 				command += " >> operationstatus.txt";
-	std::cout << command << std::endl;
+	// std::cout << command << std::endl;
 
 	std::string status;
 	do {
-		std::cout << "Let's check...." << std::endl;
+		std::cout << "." << std::flush;
 		const int sleepTime = 5000; // ms
 		std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 		utils::cleanUp("operationstatus.txt");
@@ -146,7 +145,8 @@ std::string Client::getTransactionId(std::string opid) {
 		file.close();
 
 	} while(status == "executing");
-
+	std::cout << std::endl;
+	
 	std::string txid = "";
 
 	if (status == "success") {
@@ -175,7 +175,6 @@ std::string Client::getTransactionId(std::string opid) {
 std::string Client::sendMoney(double amount, std::string recvAddress) {
 	std::cout << "Sending " << amount << " to " << recvAddress << std::endl;
 
-	// TODO: encode proof in memo
 	std::string opid = z_sendmany(amount, recvAddress);
 	std::string txid = getTransactionId(opid);
 
@@ -185,7 +184,7 @@ std::string Client::sendMoney(double amount, std::string recvAddress) {
 
 int main() {
 	std::string from = "ztestsapling19xjj9mdjudlr3863a0pjcf0kwhfqdpremlhcz5sy4r9sj64xmw6z89crar50tyrgf279x2l07uu";
-	std::string to = "ztestsapling1dcmz9s58kx85atjmw89c0nh05dqe5qyakpth8szw8c7hxymgkdsastksrptdfnmc6390qh8gl8r";
+	std::string to = "ztestsapling1mrtff36e7as3k8wxvmzuawjck3p8je0krwy9x7krh6gstgncrx70h9qw4hv7et4v2e8q5rf2n70";
 	uint32_t age = 18;
 	double amount = 0.01;
 

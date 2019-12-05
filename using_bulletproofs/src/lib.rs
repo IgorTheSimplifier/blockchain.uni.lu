@@ -70,17 +70,14 @@ fn verify_age_bulletproof(proof: String, committed_value: String) -> bool {
 
 
 	let deserealizedProofResult = RangeProof::from_bytes(hex::decode(proof).unwrap().as_slice());
-	assert_eq!(deserealizedProofResult.is_ok(), true);
-
-	//let deserealizedCommittedValue = CompressedRistretto(committed_value);
-	let deserealizedCommittedValue = CompressedRistretto::from_slice(hex::decode(committed_value).unwrap().as_slice());
 
 	match deserealizedProofResult {
 		Ok(v) => {
 			let deserealizedProof = v;
 			
 			let mut verifier_transcript = Transcript::new(b"doctest example");
-			
+			let deserealizedCommittedValue = CompressedRistretto::from_slice(hex::decode(committed_value).unwrap().as_slice());
+
 			return deserealizedProof
 							.verify_single(&bp_gens
 											, &pc_gens
@@ -89,8 +86,7 @@ fn verify_age_bulletproof(proof: String, committed_value: String) -> bool {
 											, bits)
 							.is_ok()
 	},
-		Err(e) => { 
-			println!("error parsing header: {:?}", e);
+		Err(e) => {
 			return false;
 		}
 	}
@@ -111,8 +107,18 @@ pub extern fn create_encoded_age_bulletproof(age: u64) -> *const c_char {
 pub extern fn verify_encoded_age_bulletproof(encoded: *const c_char) -> bool {
 	let encoded: &CStr = unsafe { CStr::from_ptr(encoded) };
 	let encoded: String = encoded.to_str().unwrap().to_owned();
+
+	if (encoded.len() != 1024) {
+		return false;
+	}
+
 	let mut proof = encoded;
-	let cv = proof.split_off(proof.len()-64); 
+	let cv = proof.split_off(proof.len()-64);
+
+	if(cv.len() != 64) {
+		return false;
+	}
+	
 	return verify_age_bulletproof(proof, cv);
 }
 
