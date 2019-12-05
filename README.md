@@ -1,10 +1,8 @@
 # Prerequisites
-Before running server or client you have 
-
 In order to build client and server, you have to: 
 1. to go insed of using_bulletproofs folder and build the library by typing `cargo build --release`
 2. Have SDL2 installed.
-3. In the root dir build client and server by typing `make` in the console (works for Mac OS as of now, but you can build it yourself).
+3. In the root dir build client and server by typing `make` in the console (works for Mac OS as of now, but you can also build it yourself).
 
 It's time to run, but don't rush, couple more steps are needed before:
 1. zcashd already up and running
