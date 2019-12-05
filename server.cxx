@@ -31,7 +31,6 @@ private:
 	const int 		sleepTime = 10000; // ms
 	std::set<json> 	transactions;
 	std::set<json>	newTransactions;
-	int 			prevTransactionsSize = 0;
 
 public:
 	void run(std::string filename, std::string address);
@@ -59,8 +58,7 @@ void Daemon::retrievTransaction(std::string filename, std::string address){
 
 
 void Daemon::parceResultList(std::string filename) {
-	
-	// std::cout << "Start parsing result list" << std::endl;
+	newTransactions.clear();
 	std::ifstream	file(filename);
 
 	std::string			transactionJSONasString = "";
@@ -82,7 +80,10 @@ void Daemon::parceResultList(std::string filename) {
 		{
 			json			transactionJSON;
 			transactionJSON = json::parse(transactionJSONasString);
-			transactions.insert(transactionJSON);
+			if (transactions.find(transactionJSON) == transactions.end()) {
+				transactions.insert(transactionJSON);
+				newTransactions.insert(transactionJSON);
+			}
 			transactionJSONasString = "";
 		}
 	}
@@ -92,14 +93,12 @@ void Daemon::parceResultList(std::string filename) {
 
 void Daemon::processTransactions() {
 	std::cout << "Total transactions: " << transactions.size() << std::endl;
-	if (transactions.size() > prevTransactionsSize) {
-		int diff = transactions.size() - prevTransactionsSize;
-		std::cout << "New transactions found: " << diff << std::endl;
+	if (newTransactions.size() > 0) {
+		std::cout << "New transactions found: " << newTransactions.size() << std::endl;
 	}
 	else {
 		std::cout << "No new transactions;" << std::endl;
 	}
-	prevTransactionsSize = transactions.size();
 }
 
 
