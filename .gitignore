@@ -35,7 +35,7 @@
 
 .DS_Store
 
-daemon
+server
 client
 operationstatus.txt
 opid.txt

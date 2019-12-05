@@ -30,6 +30,7 @@ class Daemon {
 private:
 	const int 		sleepTime = 10000; // ms
 	std::set<json> 	transactions;
+	std::set<json>	newTransactions;
 	int 			prevTransactionsSize = 0;
 
 public:
@@ -58,6 +59,7 @@ void Daemon::retrievTransaction(std::string filename, std::string address){
 
 
 void Daemon::parceResultList(std::string filename) {
+	
 	// std::cout << "Start parsing result list" << std::endl;
 	std::ifstream	file(filename);
 

@@ -14,12 +14,16 @@ use merlin::Transcript;
 
 extern crate bulletproofs;
 use bulletproofs::{BulletproofGens, PedersenGens, RangeProof};
+use std::ffi::CString;
+
+extern crate libc;
+use libc::c_char;
+use std::ffi::CStr;
 
 extern crate hex;
 /////////////////////////////
-
 fn create_age_bulletproof(age: u64) -> (String, String) {
-	println!("Age is: {}", age);
+	// println!("Age is: {}", age);
 
 	// pc_gens::Generators for Pedersen commitments.  These can be selected
 	// independently of the Bulletproofs generators.
@@ -31,7 +35,7 @@ fn create_age_bulletproof(age: u64) -> (String, String) {
 	
 	let minAge = 18;
 	let secret_value = ((age as i64) - minAge) as u64;
-	println!("Secret value (want to prove it's >= 0): {:?}", secret_value);
+	// println!("Secret value (want to prove it's >= 0): {:?}", secret_value);
 	let blinding = Scalar::random(&mut thread_rng());
 
 	// The proof can be chained to an existing transcript.
@@ -73,7 +77,6 @@ fn verify_age_bulletproof(proof: String, committed_value: String) -> bool {
 
 	match deserealizedProofResult {
 		Ok(v) => {
-			println!("Successfully have parsed proof");
 			let deserealizedProof = v;
 			
 			let mut verifier_transcript = Transcript::new(b"doctest example");
@@ -95,14 +98,19 @@ fn verify_age_bulletproof(proof: String, committed_value: String) -> bool {
 
 
 #[no_mangle]
-pub extern fn create_encoded_age_bulletproof(age: u64) -> String {
+pub extern fn create_encoded_age_bulletproof(age: u64) -> *const c_char {
 	let (proof, cv) = create_age_bulletproof(age);
 	let encoded =  format!("{}{}", proof, cv);
-	return encoded;
+	let s = CString::new(encoded).unwrap();
+	let p = s.as_ptr();
+	std::mem::forget(s);
+	return p;
 }
 
 #[no_mangle]
-pub extern fn verify_encoded_age_bulletproof(encoded: String) -> bool {
+pub extern fn verify_encoded_age_bulletproof(encoded: *const c_char) -> bool {
+	let encoded: &CStr = unsafe { CStr::from_ptr(encoded) };
+	let encoded: String = encoded.to_str().unwrap().to_owned();
 	let mut proof = encoded;
 	let cv = proof.split_off(proof.len()-64); 
 	return verify_age_bulletproof(proof, cv);

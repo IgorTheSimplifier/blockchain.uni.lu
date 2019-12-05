@@ -3,6 +3,11 @@
 #include <fstream>
 #include <thread>
 #include <chrono>
+#include <SDL2/SDL.h>
+
+#define LIBRARY_FILENAME "using_bulletproofs/target/release/libusing_bulletproofs.dylib"
+
+typedef char* (*create_bullet)(uint64_t);
 
 namespace utils {
 	// remove file
@@ -21,6 +26,7 @@ class Client {
 private:
 	uint32_t age = 0;
 	std::string address;
+	std::string proof;
 public:
 	Client(	uint32_t age, std::string address);
 	std::string sendMoney(double amount, std::string recvAddress);
@@ -30,7 +36,7 @@ private:
 	std::string getTransactionId(std::string opid);
 };
 
-Client::Client(	uint32_t _age, std::string _address)
+Client::Client(uint32_t _age, std::string _address)
 : age(_age)
 , address(_address) {
 	std::cout << "Age " << age << std::endl;
@@ -40,12 +46,28 @@ Client::Client(	uint32_t _age, std::string _address)
 
 void Client::generateProof() {
 	std::cout << "Generating proof..." << std::endl;
-	// get proof
+	
+	void *library_handle = SDL_LoadObject(LIBRARY_FILENAME);
+	if (library_handle == NULL) {
+		std::cout << "COULD NOT LOAD LIB" << std::endl;
+		exit(-1);
+	}
+	
+	create_bullet create = (create_bullet) SDL_LoadFunction(library_handle, "create_encoded_age_bulletproof");
+	if (create == NULL) {
+		std::cout << "COULD NOT FIND FN create_encoded_age_bulletproof" << std::endl;
+		exit(-1);
+	}
+
+	proof = create(age);
+
 	std::cout << "Proof generation is done." << std::endl;
+	std::cout << proof << std::endl;
 }
 
 // zcash-cli z_sendmany "$ZADDR" "[{\"amount\": 0.01, \"address\": \"$FRIEND_1\"}, {\"amount\": 0.01, \"address\": \"$FRIEND_2\"}]"
 std::string Client::z_sendmany(double amount, std::string recvAddress){
+	int memoSize = 512;
 	utils::cleanUp("opid.txt");
 	std::string command = "zcash-cli z_sendmany \"";
 				command += address;
@@ -55,19 +77,23 @@ std::string Client::z_sendmany(double amount, std::string recvAddress){
 				command += std::to_string(amount);
 				command += ", \"address\": \"";
 				command += recvAddress;
+				command += "\", \"memo\": \"";
+				command += proof;
 				command += "\"}";
 
-				// 2 block
-				command += ", {\"amount\": 0";
-				command += ", \"address\": \"";
-				command += recvAddress;
-				command += "\"}";
+				// // 2 block
+				// command += ", {\"amount\": 0";
+				// command += ", \"address\": \"";
+				// command += recvAddress;
+				// command += "\"}";
 				
-				// 3 block
-				command += ", {\"amount\": 0";
-				command += ", \"address\": \"";
-				command += recvAddress;
-				command += "\"}";
+				// // 3nd block
+				// command += ", {\"amount\": 0";
+				// command += ", \"address\": \"";
+				// command += recvAddress;
+				// command += "\", \"memo\": \"";
+				// command += proof.substr(memoSize,memoSize);
+				// command += "\"}";
 
 				command += "]\' >> opid.txt";
 	std::cout << command << std::endl;
