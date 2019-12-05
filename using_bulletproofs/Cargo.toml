@@ -1,0 +1,18 @@
+[package]
+name = "using_bulletproofs"
+version = "0.1.0"
+authors = ["igor <bboyifeel@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lib]
+name = "using_bulletproofs"
+crate-type = ["dylib"]
+
+[dependencies]
+curve25519-dalek = { version = "1.0.3", features = ["serde"] }
+merlin = "1.1"
+rand = "0.6"
+bulletproofs = "1.0.1"
+hex = "0.4.0"
