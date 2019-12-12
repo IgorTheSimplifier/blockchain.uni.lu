@@ -48,7 +48,7 @@ private:
 	// returns vector of json transactions
 	void parceResultList(std::string filename);
 	
-	void processTransactions();
+	void processNewTransactions();
 };
 
 
@@ -112,7 +112,7 @@ void Server::parceResultList(std::string filename) {
 }
 
 
-void Server::processTransactions() {
+void Server::processNewTransactions() {
 	if (newTransactions.size() > 0) {
 		std::cout << std::endl;
 		for(auto transaction : newTransactions) {
@@ -145,7 +145,7 @@ void Server::run(std::string filename, std::string address) {
 		cleanUp(filename);
 		retrievTransaction(filename, address);
 		parceResultList(filename);
-		processTransactions();
+		processNewTransactions();
 		
 		std::this_thread::sleep_for(std::chrono::milliseconds(sleepTime));
 	}
