@@ -31,14 +31,14 @@ void cleanUp(std::string filename) {
 	}
 }
 
-class Daemon {
+class Server {
 private:
 	const int 		sleepTime = 1000; // ms
 	std::set<json> 	transactions;
 	std::set<json>	newTransactions;
 	verify_bullet 	verify;
 public:
-	Daemon(std::string filename, std::string address);
+	Server(std::string filename, std::string address);
 private:
 	void run(std::string filename, std::string address);
 	// address has to be z_addr
@@ -52,7 +52,7 @@ private:
 };
 
 
-Daemon::Daemon(std::string filename, std::string address) {
+Server::Server(std::string filename, std::string address) {
 	void *library_handle = SDL_LoadObject(LIBRARY_FILENAME);
 	if (library_handle == NULL) {
 		std::cout << "COULD NOT LOAD LIB" << std::endl;
@@ -68,7 +68,7 @@ Daemon::Daemon(std::string filename, std::string address) {
 	run(filename, address);
 }
 
-void Daemon::retrievTransaction(std::string filename, std::string address){
+void Server::retrievTransaction(std::string filename, std::string address){
 	std::string z_listreceivedbyaddress = "zcash-cli z_listreceivedbyaddress \"";
 				z_listreceivedbyaddress += address;
 				z_listreceivedbyaddress += "\" >> ";
@@ -78,7 +78,7 @@ void Daemon::retrievTransaction(std::string filename, std::string address){
 }
 
 
-void Daemon::parceResultList(std::string filename) {
+void Server::parceResultList(std::string filename) {
 	newTransactions.clear();
 	std::ifstream	file(filename);
 
@@ -112,7 +112,7 @@ void Daemon::parceResultList(std::string filename) {
 }
 
 
-void Daemon::processTransactions() {
+void Server::processTransactions() {
 	if (newTransactions.size() > 0) {
 		std::cout << std::endl;
 		for(auto transaction : newTransactions) {
@@ -139,7 +139,7 @@ void Daemon::processTransactions() {
 }
 
 
-void Daemon::run(std::string filename, std::string address) {
+void Server::run(std::string filename, std::string address) {
 	for (;;)
 	{
 		cleanUp(filename);
@@ -158,7 +158,7 @@ int main() {
 	std::string z_addr 		= "ztestsapling1mrtff36e7as3k8wxvmzuawjck3p8je0krwy9x7krh6gstgncrx70h9qw4hv7et4v2e8q5rf2n70";
 	std::string filename 	= "z_listreceivedbyaddress.json";
 
-	Daemon daemon(filename,z_addr);
+	Server server(filename,z_addr);
 
 	return 0;
 }
