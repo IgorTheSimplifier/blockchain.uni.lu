@@ -38,7 +38,7 @@ private:
 	std::set<json>	newTransactions;
 	verify_bullet 	verify;
 public:
-	Server(std::string filename, std::string address);
+	Server(std::string address);
 private:
 	void run(std::string filename, std::string address);
 	// address has to be z_addr
@@ -52,7 +52,7 @@ private:
 };
 
 
-Server::Server(std::string filename, std::string address) {
+Server::Server(std::string address) {
 	void *library_handle = SDL_LoadObject(LIBRARY_FILENAME);
 	if (library_handle == NULL) {
 		std::cout << "COULD NOT LOAD LIB" << std::endl;
@@ -64,7 +64,8 @@ Server::Server(std::string filename, std::string address) {
 		std::cout << "COULD NOT FIND FN verify_encoded_age_bulletproof" << std::endl;
 		exit(-1);
 	}
-	
+
+	std::string filename = "z_listreceivedbyaddress.json";
 	run(filename, address);
 }
 
@@ -155,10 +156,8 @@ void Server::run(std::string filename, std::string address) {
 int main() {
 	std::cout << "Execution starts" << std::endl;
 	
-	std::string z_addr 		= "ztestsapling1mrtff36e7as3k8wxvmzuawjck3p8je0krwy9x7krh6gstgncrx70h9qw4hv7et4v2e8q5rf2n70";
-	std::string filename 	= "z_listreceivedbyaddress.json";
-
-	Server server(filename,z_addr);
+	std::string z_addr = "ztestsapling1mrtff36e7as3k8wxvmzuawjck3p8je0krwy9x7krh6gstgncrx70h9qw4hv7et4v2e8q5rf2n70";
+	Server server(z_addr);
 
 	return 0;
 }

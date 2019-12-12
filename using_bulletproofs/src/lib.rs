@@ -35,7 +35,6 @@ fn create_age_bulletproof(age: u64) -> (String, String) {
 	
 	let minAge = 18;
 	let secret_value = ((age as i64) - minAge) as u64;
-	// println!("Secret value (want to prove it's >= 0): {:?}", secret_value);
 	let blinding = Scalar::random(&mut thread_rng());
 
 	// The proof can be chained to an existing transcript.
@@ -51,9 +50,6 @@ fn create_age_bulletproof(age: u64) -> (String, String) {
 		&blinding,
 		bits,
 	).expect("A real program could handle errors");
-
-	let proofVec = proof.to_bytes();
-	let slice = proofVec.as_slice();
 
 	return (hex::encode(proof.to_bytes()), hex::encode(committed_value.to_bytes()));
 }
@@ -121,12 +117,3 @@ pub extern fn verify_encoded_age_bulletproof(encoded: *const c_char) -> bool {
 	
 	return verify_age_bulletproof(proof, cv);
 }
-
-
-// fn main() {
-// 	let age = 100;
-// 	let encoded = create_encoded_age_bulletproof(age);
-// 	println!("{:?}", encoded);
-// 	let verified = verify_encoded_age_bulletproof(encoded);
-// 	println!("Is verified: {:?}", verified);
-// }
