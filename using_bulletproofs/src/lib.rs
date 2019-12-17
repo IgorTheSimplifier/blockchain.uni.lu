@@ -22,9 +22,7 @@ use std::ffi::CStr;
 
 extern crate hex;
 /////////////////////////////
-fn create_age_bulletproof(age: u64) -> (String, String) {
-	// println!("Age is: {}", age);
-
+fn create_age_bulletproof(age: u8) -> (String, String) {
 	// pc_gens::Generators for Pedersen commitments.  These can be selected
 	// independently of the Bulletproofs generators.
 	// bp_gens::Generators for Bulletproofs, valid for proofs up to bitsize "bits"
@@ -41,15 +39,15 @@ fn create_age_bulletproof(age: u64) -> (String, String) {
 	// Here we create a transcript with a doctest domain separator.
 	let mut prover_transcript = Transcript::new(b"doctest example");
 
-	// Create a 32-bit rangeproof.
+	// Create a 8-bit rangeproof.
 	let (proof, committed_value) = RangeProof::prove_single(
 		&bp_gens,
 		&pc_gens,
 		&mut prover_transcript,
 		secret_value,
 		&blinding,
-		bits,
-	).expect("A real program could handle errors");
+		bits)
+	.expect("A real program could handle errors");
 
 	return (hex::encode(proof.to_bytes()), hex::encode(committed_value.to_bytes()));
 }
@@ -90,7 +88,7 @@ fn verify_age_bulletproof(proof: String, committed_value: String) -> bool {
 
 
 #[no_mangle]
-pub extern fn create_encoded_age_bulletproof(age: u64) -> *const c_char {
+pub extern fn create_encoded_age_bulletproof(age: u8) -> *const c_char {
 	let (proof, cv) = create_age_bulletproof(age);
 	let encoded =  format!("{}{}", proof, cv);
 	let s = CString::new(encoded).unwrap();
